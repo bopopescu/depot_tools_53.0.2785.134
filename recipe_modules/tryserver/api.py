@@ -101,7 +101,7 @@ class TryserverApi(recipe_api.RecipeApi):
     patch_ref = self.m.properties['patch_ref']
 
     patch_dir = self.m.path.mkdtemp('patch')
-    git_setup_py = self.m.path['build'].join('scripts', 'slave', 'git_setup.py')
+    git_setup_py = self.m.path['build'].join('scripts', 'subordinate', 'git_setup.py')
     git_setup_args = ['--path', patch_dir, '--url', patch_repo_url]
     patch_path = patch_dir.join('patch.diff')
 
@@ -167,7 +167,7 @@ class TryserverApi(recipe_api.RecipeApi):
     if patch_root is None:
       return self._old_get_files_affected_by_patch()
     if not kwargs.get('cwd'):
-      kwargs['cwd'] = self.m.path['slave_build'].join(patch_root)
+      kwargs['cwd'] = self.m.path['subordinate_build'].join(patch_root)
     step_result = self.m.git('diff', '--cached', '--name-only',
                              name='git diff to analyze patch',
                              stdout=self.m.raw_io.output(),

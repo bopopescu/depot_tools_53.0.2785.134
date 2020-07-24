@@ -82,15 +82,15 @@ def GenTests(api):
       oauth2=True,
   )
   yield api.test('trychange_oauth2_json') + api.properties(
-      mastername='tryserver.chromium.linux',
+      mainname='tryserver.chromium.linux',
       buildername='linux_rel',
-      slavename='totallyaslave-c4',
+      subordinatename='totallyasubordinate-c4',
       oauth2_json=True,
   )
   yield api.test('trychange_oauth2_json_win') + api.properties(
-      mastername='tryserver.chromium.win',
+      mainname='tryserver.chromium.win',
       buildername='win_rel',
-      slavename='totallyaslave-c4',
+      subordinatename='totallyasubordinate-c4',
       oauth2_json=True,
   ) + api.platform('win', 64)
   yield api.test('tryjob_fail') + api.properties(

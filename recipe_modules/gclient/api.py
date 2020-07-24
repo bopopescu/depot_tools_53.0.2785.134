@@ -161,7 +161,7 @@ class GclientApi(recipe_api.RecipeApi):
       # operations.
       #
       # TODO(mmoss): To be like current official builders, this step could
-      # just delete the whole <slave_name>/build/ directory and start each
+      # just delete the whole <subordinate_name>/build/ directory and start each
       # build from scratch. That might be the least bad solution, at least
       # until we have a reliable gclient method to produce a pristine working
       # dir for git-based builds (e.g. maybe some combination of 'git
@@ -240,7 +240,7 @@ class GclientApi(recipe_api.RecipeApi):
         name = 'recurse (git config %s)' % var
         self(name, ['recurse', 'git', 'config', var, val], **kwargs)
     finally:
-      cwd = kwargs.get('cwd', self.m.path['slave_build'])
+      cwd = kwargs.get('cwd', self.m.path['subordinate_build'])
       if 'checkout' not in self.m.path:
         self.m.path['checkout'] = cwd.join(
           *cfg.solutions[0].name.split(self.m.path.sep))
@@ -254,7 +254,7 @@ class GclientApi(recipe_api.RecipeApi):
     prefix = '%sgclient ' % (('[spec: %s] ' % alias) if alias else '')
 
     return self.m.python(prefix + 'revert',
-        self.m.path['build'].join('scripts', 'slave', 'gclient_safe_revert.py'),
+        self.m.path['build'].join('scripts', 'subordinate', 'gclient_safe_revert.py'),
         ['.', self.m.path['depot_tools'].join('gclient',
                                               platform_ext={'win': '.bat'})],
         infra_step=True,
@@ -299,7 +299,7 @@ class GclientApi(recipe_api.RecipeApi):
                 print 'deleting %s' % path_to_file
                 os.remove(path_to_file)
       """,
-      args=[self.m.path['slave_build']],
+      args=[self.m.path['subordinate_build']],
       infra_step=True,
     )
 

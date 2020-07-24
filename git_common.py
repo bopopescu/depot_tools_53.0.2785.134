@@ -583,7 +583,7 @@ def parse_commitrefs(*commitrefs):
 
   A commitref is anything which can resolve to a commit. Popular examples:
     * 'HEAD'
-    * 'origin/master'
+    * 'origin/main'
     * 'cool_branch~2'
   """
   try:
@@ -634,7 +634,7 @@ def repo_root():
 
 
 def root():
-  return get_config('depot-tools.upstream', 'origin/master')
+  return get_config('depot-tools.upstream', 'origin/main')
 
 
 @contextlib.contextmanager

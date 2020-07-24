@@ -373,7 +373,7 @@ class GitWrapper(SCMWrapper):
     self._CheckMinVersion("1.6.6")
 
     # If a dependency is not pinned, track the default remote branch.
-    default_rev = 'refs/remotes/%s/master' % self.remote
+    default_rev = 'refs/remotes/%s/main' % self.remote
     url, deps_revision = gclient_utils.SplitUrlRevision(self.url)
     rev_str = ""
     revision = deps_revision
@@ -527,9 +527,9 @@ class GitWrapper(SCMWrapper):
     #      - checkout new branch
     #   c) otherwise exit
 
-    # GetUpstreamBranch returns something like 'refs/remotes/origin/master' for
+    # GetUpstreamBranch returns something like 'refs/remotes/origin/main' for
     # a tracking branch
-    # or 'master' if not a tracking branch (it's based on a specific rev/hash)
+    # or 'main' if not a tracking branch (it's based on a specific rev/hash)
     # or it returns None if it couldn't find an upstream
     if cur_branch is None:
       upstream_branch = None
@@ -749,7 +749,7 @@ class GitWrapper(SCMWrapper):
       # Don't reuse the args.
       return self.update(options, [], file_list)
 
-    default_rev = "refs/heads/master"
+    default_rev = "refs/heads/main"
     if options.upstream:
       if self._GetCurrentBranch():
         upstream_branch = scm.GIT.GetUpstreamBranch(self.checkout_path)

@@ -446,7 +446,7 @@ def get_target_revision(folder_name, git_url, revisions):
 
 def force_revision(folder_name, revision):
   split_revision = revision.split(':', 1)
-  branch = 'master'
+  branch = 'main'
   if len(split_revision) == 2:
     # Support for "branch:revision" syntax.
     branch, revision = split_revision

@@ -23,7 +23,7 @@ class BotUpdateTestApi(recipe_test_api.RecipeTestApi):
         for project_name, property_name in revision_mapping.iteritems()
     }
     properties.update({
-        '%s_cp' % property_name: ('refs/heads/master@{#%s}' %
+        '%s_cp' % property_name: ('refs/heads/main@{#%s}' %
                                   self.gen_commit_position(project_name))
         for project_name, property_name in revision_mapping.iteritems()
     })

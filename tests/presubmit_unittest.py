@@ -49,21 +49,21 @@ def CheckChangeOnUpload(input_api, output_api):
   else:
     return ()
 """
-  presubmit_tryslave = """
-def GetPreferredTrySlaves():
+  presubmit_trysubordinate = """
+def GetPreferredTrySubordinates():
   return %s
 """
 
-  presubmit_tryslave_project = """
-def GetPreferredTrySlaves(project):
+  presubmit_trysubordinate_project = """
+def GetPreferredTrySubordinates(project):
   if project == %s:
     return %s
   else:
     return %s
 """
 
-  presubmit_trymaster = """
-def GetPreferredTryMasters(project, change):
+  presubmit_trymain = """
+def GetPreferredTryMains(project, change):
   return %s
 """
 
@@ -170,9 +170,9 @@ class PresubmitUnittest(PresubmitTestsBase):
   def testMembersChanged(self):
     self.mox.ReplayAll()
     members = [
-      'AffectedFile', 'Change', 'DoGetTrySlaves',
+      'AffectedFile', 'Change', 'DoGetTrySubordinates',
       'DoPostUploadExecuter', 'DoPresubmitChecks', 'GetPostUploadExecuter',
-      'GetTrySlavesExecuter', 'GitAffectedFile', 'CallCommand', 'CommandData',
+      'GetTrySubordinatesExecuter', 'GitAffectedFile', 'CallCommand', 'CommandData',
       'GitChange', 'InputApi', 'ListRelevantPresubmitFiles', 'main',
       'NonexistantCannedCheckFilter', 'OutputApi', 'ParseFiles',
       'PresubmitFailure', 'PresubmitExecuter', 'PresubmitOutput', 'ScanSubDirs',
@@ -182,8 +182,8 @@ class PresubmitUnittest(PresubmitTestsBase):
       'marshal', 'normpath', 'optparse', 'os', 'owners', 'pickle',
       'presubmit_canned_checks', 'random', 're', 'rietveld', 'scm',
       'subprocess', 'sys', 'tempfile', 'time', 'traceback', 'types', 'unittest',
-      'urllib2', 'warn', 'multiprocessing', 'DoGetTryMasters',
-      'GetTryMastersExecuter', 'itertools', 'urlparse', 'gerrit_util',
+      'urllib2', 'warn', 'multiprocessing', 'DoGetTryMains',
+      'GetTryMainsExecuter', 'itertools', 'urlparse', 'gerrit_util',
       'GerritAccessor',
     ]
     # If this test fails, you should add the relevant test.
@@ -963,7 +963,7 @@ def CheckChangeOnCommit(input_api, output_api):
                        '\n'
                        'Presubmit checks passed.\n'))
 
-  def testGetTrySlavesExecuter(self):
+  def testGetTrySubordinatesExecuter(self):
     self.mox.ReplayAll()
     change = presubmit.Change(
         'foo',
@@ -973,7 +973,7 @@ def CheckChangeOnCommit(input_api, output_api):
         0,
         0,
         None)
-    executer = presubmit.GetTrySlavesExecuter()
+    executer = presubmit.GetTrySubordinatesExecuter()
     self.assertEqual([], executer.ExecPresubmitScript('', '', '', change))
     self.assertEqual([],
         executer.ExecPresubmitScript('def foo():\n  return\n', '', '', change))
@@ -989,7 +989,7 @@ def CheckChangeOnCommit(input_api, output_api):
         mixed_old_and_new, not_set):
       self.assertRaises(presubmit.PresubmitFailure,
                         executer.ExecPresubmitScript,
-                        self.presubmit_tryslave % result, '', '', change)
+                        self.presubmit_trysubordinate % result, '', '', change)
 
     # good results
     expected_result = ['1', '2', '3']
@@ -1001,9 +1001,9 @@ def CheckChangeOnCommit(input_api, output_api):
       self.assertEqual(
           result,
           executer.ExecPresubmitScript(
-              self.presubmit_tryslave % result, '', '', change))
+              self.presubmit_trysubordinate % result, '', '', change))
 
-  def testGetTrySlavesExecuterWithProject(self):
+  def testGetTrySubordinatesExecuterWithProject(self):
     self.mox.ReplayAll()
 
     change = presubmit.Change(
@@ -1015,10 +1015,10 @@ def CheckChangeOnCommit(input_api, output_api):
         0,
         None)
 
-    executer = presubmit.GetTrySlavesExecuter()
+    executer = presubmit.GetTrySubordinatesExecuter()
     expected_result1 = ['1', '2']
     expected_result2 = ['a', 'b', 'c']
-    script = self.presubmit_tryslave_project % (
+    script = self.presubmit_trysubordinate_project % (
         repr('foo'), repr(expected_result1), repr(expected_result2))
     self.assertEqual(
         expected_result1, executer.ExecPresubmitScript(script, '', 'foo',
@@ -1027,7 +1027,7 @@ def CheckChangeOnCommit(input_api, output_api):
         expected_result2, executer.ExecPresubmitScript(script, '', 'bar',
                                                        change))
 
-  def testDoGetTrySlaves(self):
+  def testDoGetTrySubordinates(self):
     join = presubmit.os.path.join
     filename = 'foo.cc'
     filename_linux = join('linux_only', 'penguin.cc')
@@ -1040,7 +1040,7 @@ def CheckChangeOnCommit(input_api, output_api):
     presubmit.os.listdir(self.fake_root_dir).AndReturn(['PRESUBMIT.py'])
     presubmit.os.path.isfile(root_presubmit).AndReturn(True)
     presubmit.gclient_utils.FileRead(root_presubmit, 'rU').AndReturn(
-        self.presubmit_tryslave % '["win"]')
+        self.presubmit_trysubordinate % '["win"]')
 
     presubmit.os.path.isfile(inherit_path).AndReturn(False)
     presubmit.os.listdir(self.fake_root_dir).AndReturn(['PRESUBMIT.py'])
@@ -1049,9 +1049,9 @@ def CheckChangeOnCommit(input_api, output_api):
         ['PRESUBMIT.py'])
     presubmit.os.path.isfile(linux_presubmit).AndReturn(True)
     presubmit.gclient_utils.FileRead(root_presubmit, 'rU').AndReturn(
-        self.presubmit_tryslave % '["win"]')
+        self.presubmit_trysubordinate % '["win"]')
     presubmit.gclient_utils.FileRead(linux_presubmit, 'rU').AndReturn(
-        self.presubmit_tryslave % '["linux"]')
+        self.presubmit_trysubordinate % '["linux"]')
     self.mox.ReplayAll()
 
     change = presubmit.Change(
@@ -1059,36 +1059,36 @@ def CheckChangeOnCommit(input_api, output_api):
 
     output = StringIO.StringIO()
     self.assertEqual(['win'],
-                     presubmit.DoGetTrySlaves(change, [filename],
+                     presubmit.DoGetTrySubordinates(change, [filename],
                                               self.fake_root_dir,
                                               None, None, False, output))
     output = StringIO.StringIO()
     self.assertEqual(['win', 'linux'],
-                     presubmit.DoGetTrySlaves(change,
+                     presubmit.DoGetTrySubordinates(change,
                                               [filename, filename_linux],
                                               self.fake_root_dir, None, None,
                                               False, output))
 
-  def testGetTrySlavesExecuter_ok(self):
+  def testGetTrySubordinatesExecuter_ok(self):
     script_text = (
-        'def GetPreferredTrySlaves():\n'
+        'def GetPreferredTrySubordinates():\n'
         '  return ["foo", "bar"]\n')
-    results = presubmit.GetTrySlavesExecuter.ExecPresubmitScript(
+    results = presubmit.GetTrySubordinatesExecuter.ExecPresubmitScript(
         script_text, 'path', 'project', None)
     self.assertEquals(['foo', 'bar'], results)
 
-  def testGetTrySlavesExecuter_comma(self):
+  def testGetTrySubordinatesExecuter_comma(self):
     script_text = (
-        'def GetPreferredTrySlaves():\n'
+        'def GetPreferredTrySubordinates():\n'
         '  return ["foo,bar"]\n')
     try:
-      presubmit.GetTrySlavesExecuter.ExecPresubmitScript(
+      presubmit.GetTrySubordinatesExecuter.ExecPresubmitScript(
           script_text, 'path', 'project', None)
       self.fail()
     except presubmit.PresubmitFailure:
       pass
 
-  def testGetTryMastersExecuter(self):
+  def testGetTryMainsExecuter(self):
     self.mox.ReplayAll()
     change = presubmit.Change(
         'foo',
@@ -1098,7 +1098,7 @@ def CheckChangeOnCommit(input_api, output_api):
         0,
         0,
         None)
-    executer = presubmit.GetTryMastersExecuter()
+    executer = presubmit.GetTryMainsExecuter()
     self.assertEqual({}, executer.ExecPresubmitScript('', '', '', change))
     self.assertEqual({},
         executer.ExecPresubmitScript('def foo():\n  return\n', '', '', change))
@@ -1114,10 +1114,10 @@ def CheckChangeOnCommit(input_api, output_api):
       self.assertEqual(
           result,
           executer.ExecPresubmitScript(
-              self.presubmit_trymaster % result, '', '', change))
+              self.presubmit_trymain % result, '', '', change))
 
-  def testMergeMasters(self):
-    merge = presubmit._MergeMasters
+  def testMergeMains(self):
+    merge = presubmit._MergeMains
     self.assertEqual({}, merge({}, {}))
     self.assertEqual({'m1': {}}, merge({}, {'m1': {}}))
     self.assertEqual({'m1': {}}, merge({'m1': {}}, {}))
@@ -1139,10 +1139,10 @@ def CheckChangeOnCommit(input_api, output_api):
     for permutation in itertools.permutations(parts):
       self.assertEqual(expected, reduce(merge, permutation, {}))
 
-  def testDoGetTryMasters(self):
-    root_text = (self.presubmit_trymaster
+  def testDoGetTryMains(self):
+    root_text = (self.presubmit_trymain
         % '{"t1.cr": {"win": set(["defaulttests"])}}')
-    linux_text = (self.presubmit_trymaster
+    linux_text = (self.presubmit_trymain
         % ('{"t1.cr": {"linux1": set(["t1"])},'
            ' "t2.cr": {"linux2": set(["defaulttests"])}}'))
 
@@ -1175,7 +1175,7 @@ def CheckChangeOnCommit(input_api, output_api):
 
     output = StringIO.StringIO()
     self.assertEqual({'t1.cr': {'win': ['defaulttests']}},
-                     presubmit.DoGetTryMasters(change, [filename],
+                     presubmit.DoGetTryMains(change, [filename],
                                                self.fake_root_dir,
                                                None, None, False, output))
     output = StringIO.StringIO()
@@ -1184,7 +1184,7 @@ def CheckChangeOnCommit(input_api, output_api):
       't2.cr': {'linux2': ['defaulttests']},
     }
     self.assertEqual(expected,
-                     presubmit.DoGetTryMasters(change,
+                     presubmit.DoGetTryMains(change,
                                                [filename, filename_linux],
                                                self.fake_root_dir, None, None,
                                                False, output))

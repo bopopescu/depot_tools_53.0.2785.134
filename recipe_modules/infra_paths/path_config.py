@@ -14,13 +14,13 @@ def infra_common(c):
 @CONFIG_CTX(includes=['infra_common'])
 def infra_buildbot(c):
   c.base_paths['root'] = c.CURRENT_WORKING_DIR[:-4]
-  c.base_paths['slave_build'] = c.CURRENT_WORKING_DIR
+  c.base_paths['subordinate_build'] = c.CURRENT_WORKING_DIR
   c.base_paths['cache'] = c.base_paths['root'] + (
-      'build', 'slave', 'cache')
+      'build', 'subordinate', 'cache')
   c.base_paths['git_cache'] = c.base_paths['root'] + (
-      'build', 'slave', 'cache_dir')
+      'build', 'subordinate', 'cache_dir')
   c.base_paths['goma_cache'] = c.base_paths['root'] + (
-      'build', 'slave', 'goma_cache')
+      'build', 'subordinate', 'goma_cache')
   for token in ('build_internal', 'build', 'depot_tools'):
     c.base_paths[token] = c.base_paths['root'] + (token,)
 
@@ -28,7 +28,7 @@ def infra_buildbot(c):
 @CONFIG_CTX(includes=['infra_common'])
 def infra_kitchen(c):
   c.base_paths['root'] = c.CURRENT_WORKING_DIR
-  c.base_paths['slave_build'] = c.CURRENT_WORKING_DIR
+  c.base_paths['subordinate_build'] = c.CURRENT_WORKING_DIR
   # TODO(phajdan.jr): have one cache dir, let clients append suffixes.
 
   b_dir = c.CURRENT_WORKING_DIR

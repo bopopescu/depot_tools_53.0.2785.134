@@ -4,7 +4,7 @@
 # found in the LICENSE file.
 
 """
-Create new branch tracking origin/master by default.
+Create new branch tracking origin/main by default.
 """
 
 import argparse
